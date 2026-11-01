@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^7.10.1",
     "clsx": "^2.1.1",
     "ics": "^3.7.6",
     "lucide-react": "^0.460.0",
