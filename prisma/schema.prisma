@@ -1,0 +1,115 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Event {
+  id               String         @id @default(cuid())
+  title            String
+  eventType        String         // "WEDDING" | "BIRTHDAY" | "COMMUNITY"
+  eventDate        DateTime
+  guestCount       Int
+  totalBudget      Float          // In INR
+  currency         String         @default("INR")
+  location         String
+  notes            String?
+  theme            String?
+  shareToken       String?        @unique
+  shareTokenExpiry DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  budgetItems      BudgetItem[]
+  timelineTasks    TimelineTask[]
+  vendorCategories VendorCategory[]
+  ideas            IdeaItem[]
+  auditLogs        AuditLog[]
+}
+
+model BudgetItem {
+  id              String   @id @default(cuid())
+  eventId         String
+  category        String   // "CATERING", "VENUE", "DECOR", "PHOTO", etc.
+  allocatedAmount Float
+  spentAmount     Float    @default(0)
+  notes           String?
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model TimelineTask {
+  id             String    @id @default(cuid())
+  eventId        String
+  title          String
+  category       String
+  dueDate        DateTime
+  offsetDays     Int
+  status         String    @default("PENDING") // "PENDING" | "IN_PROGRESS" | "COMPLETED"
+  priority       String    @default("MEDIUM")  // "LOW" | "MEDIUM" | "HIGH"
+  isCriticalPath Boolean   @default(false)
+  dependencies   String?   // Comma-separated task IDs
+  notes          String?
+  event          Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model VendorCategory {
+  id             String        @id @default(cuid())
+  eventId        String
+  category       String        // "Caterer", "Decorator", "Sound & Lights", etc.
+  checklistJson  String        // JSON array of questions, red flags & contract tips
+  quotes         VendorQuote[]
+  event          Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model VendorQuote {
+  id               String         @id @default(cuid())
+  vendorCategoryId String
+  vendorName       String
+  contactPerson    String?
+  contactInfo      String?
+  quotedAmount     Float
+  status           String         @default("DRAFT") // "DRAFT" | "SHORTLISTED" | "SELECTED" | "REJECTED"
+  weightedScore    Float          @default(0)
+  criteriaScores   String?        // JSON of criteria { pricing: 8, quality: 9, responsiveness: 7 }
+  notes            String?
+  vendorCategory   VendorCategory @relation(fields: [vendorCategoryId], references: [id], onDelete: Cascade)
+
+  @@index([vendorCategoryId])
+}
+
+model IdeaItem {
+  id          String   @id @default(cuid())
+  eventId     String
+  type        String   // "THEME" | "MENU" | "DECOR" | "ACTIVITY" | "INVITATION"
+  title       String
+  description String
+  category    String   // Related budget category
+  minCost     Float
+  maxCost     Float
+  isAdded     Boolean  @default(false)
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model AuditLog {
+  id               String   @id @default(cuid())
+  eventId          String
+  changeType       String   // "GUEST_COUNT_REPLAN", "BUDGET_REBALANCE", "DATE_CHANGE"
+  description      String
+  beforeSnapshot   String   // JSON snapshot
+  afterSnapshot    String   // JSON snapshot
+  appliedAt        DateTime @default(now())
+  event            Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
