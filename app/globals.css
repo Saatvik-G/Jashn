@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FAF7F2;
+  --foreground: #1C1917;
+}
+
+@layer base {
+  body {
+    background-color: #FAF7F2;
+    color: #1C1917;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-fraunces), Georgia, serif;
+    letter-spacing: -0.015em;
+  }
+}
+
+/* Subtle hand-drawn divider effect */
+.divider-ornament {
+  background-image: radial-gradient(circle, #D97706 1.5px, transparent 1.5px);
+  background-size: 12px 100%;
+}
+
+/* Print CSS for clean PDF export */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .card-print {
+    box-shadow: none !important;
+    border: 1px solid #D1D5DB !important;
+    page-break-inside: avoid;
+  }
+}
+
+/* Custom smooth transitions respecting prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
