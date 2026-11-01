@@ -40,6 +40,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/api/**/*": ["./prisma/starter.db"],
+    "/**/*": ["./prisma/starter.db"],
+  },
   async headers() {
     return [
       {

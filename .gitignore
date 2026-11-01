@@ -29,11 +29,11 @@ yarn-error.log*
 !.env.example
 
 # Database
-prisma/*.db
 prisma/*.db-journal
 *.sqlite
 *.sqlite3
 *.db
+!prisma/starter.db
 
 # OS Files
 .DS_Store

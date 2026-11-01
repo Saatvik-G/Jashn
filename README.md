@@ -136,13 +136,38 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ---
 
-## Deployment (Zero Cost)
+## Deployment (Vercel & Cloud)
 
-- **Local First**: Runs completely locally with SQLite (`prisma/dev.db`). Zero external network dependencies required in offline mode.
-- **Optional Cloud Path**:
-  - Deploy frontend to **Vercel Hobby** (Free tier).
-  - Connect database via **Turso Free Tier** (LibSQL / SQLite compatible).
-  - Configure `GEMINI_API_KEY` in Vercel Environment Variables.
+### Option A: One-Click Vercel Hobby Deploy (Zero Cost, Out-of-the-Box)
+EventSense is pre-configured to deploy on **Vercel Hobby** with zero paid services:
+
+1. Push or fork this repo to your GitHub account: `https://github.com/Saatvik-G/Jashn.git`.
+2. Go to [vercel.com/new](https://vercel.com/new) and select the `Jashn` repository.
+3. **Build & Output Settings**:
+   - Framework Preset: **Next.js** (automatically detected)
+   - Build Command: `prisma generate && next build` (automatically detected from `package.json`)
+   - Output Directory: `.next`
+4. **Environment Variables** (Optional):
+   | Variable | Description | Default / Fallback |
+   | :--- | :--- | :--- |
+   | `GEMINI_API_KEY` | Google Gemini free-tier API key | *Optional.* If omitted, EventSense operates in rich **Offline Mode**. |
+   | `GEMINI_MODEL` | Free-tier Gemini model identifier | `gemini-1.5-flash` |
+   | `DATABASE_URL` | SQLite / LibSQL connection string | *Optional.* Automatically initializes writable database in `/tmp/dev.db` with 3 seed events. |
+5. Click **Deploy**. Within 60 seconds, your celebration assistant will be live!
+
+> [!NOTE]
+> On Vercel Serverless, lambda storage is read-only except `/tmp`. EventSense automatically initializes a writable SQLite database at `/tmp/dev.db` seeded with the 3 demo celebrations. All event creations, replan diffs, task checklists, and share links work instantly.
+
+---
+
+### Option B: Persistent Cloud Database with Turso (Free Tier)
+If you want persistent multi-region cloud SQLite across serverless cold boots:
+
+1. Create a free database on [turso.tech](https://turso.tech) (`turso db create jashn-db`).
+2. Get the database URL and authentication token.
+3. Set in Vercel Environment Variables:
+   - `DATABASE_URL`: `libsql://jashn-db-[your-org].turso.io?authToken=[token]`
+4. Run `npx prisma db push` to push the schema to Turso.
 
 ---
 

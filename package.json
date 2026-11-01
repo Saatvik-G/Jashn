@@ -5,7 +5,7 @@
   "description": "EventSense (Jashn) - GenAI planning assistant for weddings, birthdays, and community events with deterministic engines, privacy guardrails, and celebratory editorial design.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
